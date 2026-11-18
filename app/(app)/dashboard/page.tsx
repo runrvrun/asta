@@ -116,7 +116,7 @@ export default function DashboardPage() {
     <div>
       <div className="page-head">
         <div>
-          <h1>{greeting()}, {user.rank} {user.name}</h1>
+          <h1>{greeting()}, {user.name}</h1>
           <div className="subtitle">{formatDateLong(new Date())} · Ringkasan portofolio aset{unitId ? ` ${db.units.find((u) => u.id === unitId)?.name}` : " seluruh satuan"}</div>
         </div>
         <div className="page-actions">

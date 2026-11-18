@@ -88,7 +88,7 @@ export function FlightLogDialog({ open, onClose, assetId }: { open: boolean; onC
         </Field>
         <Field label="Jam terbang" required error={err("hours")}><input className="input" inputMode="decimal" value={hours} onChange={(e) => setHours(e.target.value)} /></Field>
         <Field label="Siklus (pendaratan)" required error={err("cycles")}><input className="input" inputMode="numeric" value={cycles} onChange={(e) => setCycles(e.target.value)} /></Field>
-        <Field label="Penerbang / operator" required error={err("pilot")}><input className="input" value={pilot} onChange={(e) => setPilot(e.target.value)} placeholder="mis. Kapten Pnb Rizky Hidayat" /></Field>
+        <Field label="Penerbang / operator" required error={err("pilot")}><input className="input" value={pilot} onChange={(e) => setPilot(e.target.value)} placeholder="mis. Rizky Hidayat" /></Field>
         <Field label="Rute / area"><input className="input" value={route} onChange={(e) => setRoute(e.target.value)} placeholder="mis. Semarang – Makassar" /></Field>
       </div>
     </Modal>

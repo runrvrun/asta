@@ -381,7 +381,7 @@ export function LocationSection({ d, set, errors, db }: SectionProps) {
       <Field label="Penanggung Jawab" required error={errors.picId}>
         <select className={cls(errors, "picId", "select")} value={d.picId} onChange={(e) => set({ picId: e.target.value })}>
           <option value="">— Pilih personel —</option>
-          {users.map((u) => <option key={u.id} value={u.id}>{u.rank} {u.name} — {u.position}</option>)}
+          {users.map((u) => <option key={u.id} value={u.id}>{u.name} — {u.position}</option>)}
         </select>
       </Field>
       <Field label="NRP / Jabatan Penanggung Jawab">

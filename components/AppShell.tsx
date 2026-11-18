@@ -139,14 +139,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               <button className="avatar-wrap" onClick={() => setMenuOpen((v) => !v)}>
                 <div className="avatar">{initials(user.name)}</div>
                 <div className="avatar-meta">
-                  <div className="avatar-name">{user.rank} {user.name}</div>
+                  <div className="avatar-name">{user.name}</div>
                   <div className="avatar-role">{ROLE_LABEL[user.role]}</div>
                 </div>
               </button>
               {menuOpen && (
                 <div className="popover">
                   <div className="popover-head">
-                    <div className="avatar-name">{user.rank} {user.name}</div>
+                    <div className="avatar-name">{user.name}</div>
                     <div className="avatar-role">{user.position}</div>
                   </div>
                   <Link className="popover-item" href="/profil"><Icon name="user" />Profil & kata sandi</Link>

@@ -145,7 +145,7 @@ export default function InventarisasiPage() {
           </Field>
           <Field label="Ketua tim" required>
             <select className="select" value={leaderId} onChange={(e) => setLeaderId(e.target.value)}>
-              {leaders.map((u) => <option key={u.id} value={u.id}>{u.rank} {u.name}</option>)}
+              {leaders.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
             </select>
           </Field>
         </div>

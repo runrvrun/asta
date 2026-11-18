@@ -5,7 +5,7 @@ import type {
   SparePart, StockMovement, StockTake, Transfer, Unit, User, WorkOrder, AviationInfo, Condition, AssetStatus,
 } from "./types";
 
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 export const DEMO_PASSWORD = "asta123";
 
 // ---------- helpers ----------
@@ -78,22 +78,22 @@ const LOCATIONS: Location[] = [
 ];
 
 function makeUsers(now: number): User[] {
-  const u = (id: string, username: string, name: string, rank: string, nrp: string, position: string, role: User["role"], unitId: string, active = true, lastLoginDaysAgo?: number): User => ({
-    id, username, password: DEMO_PASSWORD, name, rank, nrp, position, role, unitId, active,
+  const u = (id: string, username: string, name: string, nrp: string, position: string, role: User["role"], unitId: string, active = true, lastLoginDaysAgo?: number): User => ({
+    id, username, password: DEMO_PASSWORD, name, nrp, position, role, unitId, active,
     lastLogin: lastLoginDaysAgo === undefined ? undefined : tsOffset(now, -lastLoginDaysAgo, 8, 15),
   });
   return [
-    u("usr-admin", "admin", "Dimas Prakoso", "Mayor", "512308", "Kasubsi Sistem Informasi Aset", "admin", "u-mkp", true, 1),
-    u("usr-pimpinan", "komandan", "Hendra Wijayakusuma", "Kolonel", "507711", "Komandan Pangkalan Wirasakti", "pimpinan", "u-pws", true, 2),
-    u("usr-petugas", "petugas", "Sari Anggraini", "Kapten", "521904", "Perwira Pengelola Aset", "petugas", "u-pws", true, 0),
-    u("usr-teknisi", "teknisi", "Andi Prasetyo", "Serma", "689012", "Teknisi Pesawat Angkut", "teknisi", "u-d40", true, 0),
-    u("usr-auditor", "auditor", "Ratna Pertiwi", "Letkol", "509837", "Inspektur Logistik", "auditor", "u-mkp", true, 5),
-    u("usr-pimpinan2", "kadepo", "Agus Setiadi", "Letkol", "510244", "Kepala Depo Pemeliharaan 40", "pimpinan", "u-d40", true, 3),
-    u("usr-petugas2", "petugas2", "Fajar Nugroho", "Lettu", "530118", "Perwira Logistik Pangkalan", "petugas", "u-pcb", true, 4),
-    u("usr-teknisi2", "budi", "Budi Santoso", "Sertu", "701556", "Teknisi Helikopter", "teknisi", "u-s07", true, 1),
-    u("usr-teknisi3", "citra", "Citra Ramadhani", "Peltu", "655230", "Teknisi Kelistrikan & Avionik", "teknisi", "u-d40", true, 2),
-    u("usr-teknisi4", "dedi", "Dedi Kurniawan", "Serka", "688417", "Teknisi Mesin", "teknisi", "u-d40", true, 6),
-    u("usr-petugas3", "wulan", "Wulan Maharani", "PNS III/c", "198804122010", "Pengelola Barang Milik Negara", "petugas", "u-mkp", false, 60),
+    u("usr-admin", "admin", "Dimas Prakoso", "512308", "Kasubsi Sistem Informasi Aset", "admin", "u-mkp", true, 1),
+    u("usr-pimpinan", "komandan", "Hendra Wijayakusuma", "507711", "Komandan Pangkalan Wirasakti", "pimpinan", "u-pws", true, 2),
+    u("usr-petugas", "petugas", "Sari Anggraini", "521904", "Perwira Pengelola Aset", "petugas", "u-pws", true, 0),
+    u("usr-teknisi", "teknisi", "Andi Prasetyo", "689012", "Teknisi Pesawat Angkut", "teknisi", "u-d40", true, 0),
+    u("usr-auditor", "auditor", "Ratna Pertiwi", "509837", "Inspektur Logistik", "auditor", "u-mkp", true, 5),
+    u("usr-pimpinan2", "kadepo", "Agus Setiadi", "510244", "Kepala Depo Pemeliharaan 40", "pimpinan", "u-d40", true, 3),
+    u("usr-petugas2", "petugas2", "Fajar Nugroho", "530118", "Perwira Logistik Pangkalan", "petugas", "u-pcb", true, 4),
+    u("usr-teknisi2", "budi", "Budi Santoso", "701556", "Teknisi Helikopter", "teknisi", "u-s07", true, 1),
+    u("usr-teknisi3", "citra", "Citra Ramadhani", "655230", "Teknisi Kelistrikan & Avionik", "teknisi", "u-d40", true, 2),
+    u("usr-teknisi4", "dedi", "Dedi Kurniawan", "688417", "Teknisi Mesin", "teknisi", "u-d40", true, 6),
+    u("usr-petugas3", "wulan", "Wulan Maharani", "198804122010", "Pengelola Barang Milik Negara", "petugas", "u-mkp", false, 60),
   ];
 }
 
@@ -282,11 +282,11 @@ function makeWorkOrders(now: number): WorkOrder[] {
     wo(1, "ast-048", "Korektif", "Penggantian bearing starter generator APU", "Starter generator APU bergetar berlebih saat start-up. Indikasi keausan pada bearing utama, ditemukan saat inspeksi rutin oleh tim Hangar 1.", "Tinggi", "dikerjakan", "usr-teknisi", 9, 4, 8, 5.5,
       [["Lepas unit starter generator dari dudukan", true], ["Bongkar housing & periksa bearing", true], ["Ganti bearing dengan part baru (BRG-4471)", false], ["Pasang kembali & uji fungsi", false], ["Verifikasi getaran dalam batas normal", false]],
       [{ partId: "prt-02", qty: 1 }, { partId: "prt-03", qty: 1 }],
-      [[9, "WO dibuat", "usr-petugas"], [9, "Ditugaskan ke Serma Andi Prasetyo", "usr-petugas"], [8, "Mulai dikerjakan", "usr-teknisi"], [7, "Menunggu kedatangan bearing BRG-4471", "usr-teknisi"], [3, "Part diterima, pekerjaan dilanjutkan", "usr-teknisi"]]),
+      [[9, "WO dibuat", "usr-petugas"], [9, "Ditugaskan ke Andi Prasetyo", "usr-petugas"], [8, "Mulai dikerjakan", "usr-teknisi"], [7, "Menunggu kedatangan bearing BRG-4471", "usr-teknisi"], [3, "Part diterima, pekerjaan dilanjutkan", "usr-teknisi"]]),
     wo(2, "ast-002", "Inspeksi Berkala", "Inspeksi periodik 200 jam AX-1307", "Inspeksi periodik terjadwal setelah pesawat melewati batas 200 jam terbang. Termasuk pemeriksaan struktur sayap dan roda pendarat.", "Kritis", "menunggu_part", "usr-teknisi4", 14, 2, 64, 41,
       [["Pemeriksaan visual struktur & sayap", true], ["Borescope mesin no. 1–4", true], ["Penggantian fuel nozzle mesin no. 2", false], ["Pemeriksaan & servis roda pendarat", true], ["Uji fungsi sistem hidrolik", false], ["Ground run & uji terbang", false]],
       [{ partId: "prt-04", qty: 20 }, { partId: "prt-15", qty: 24 }],
-      [[14, "WO dibuat dari jadwal inspeksi", "usr-petugas"], [14, "Ditugaskan ke Serka Dedi Kurniawan", "usr-petugas"], [13, "Mulai dikerjakan", "usr-teknisi4"], [6, "Menunggu fuel nozzle T56-FN-118 (stok kurang)", "usr-teknisi4"]]),
+      [[14, "WO dibuat dari jadwal inspeksi", "usr-petugas"], [14, "Ditugaskan ke Dedi Kurniawan", "usr-petugas"], [13, "Mulai dikerjakan", "usr-teknisi4"], [6, "Menunggu fuel nozzle T56-FN-118 (stok kurang)", "usr-teknisi4"]]),
     wo(3, "ast-026", "Korektif", "Perbaikan kelistrikan GPU-04", "Output tegangan GPU tidak stabil, contactor relay terbakar.", "Tinggi", "menunggu_part", "usr-teknisi3", 11, -1, 6, 3,
       [["Diagnosa sistem kelistrikan", true], ["Ganti contactor relay", false], ["Uji beban 90 kVA", false]],
       [],
@@ -294,11 +294,11 @@ function makeWorkOrders(now: number): WorkOrder[] {
     wo(4, "ast-013", "Korektif", "Overhaul gearbox rotor utama HX-3204", "Chip detector gearbox rotor utama menyala saat terbang latihan. Helikopter di-grounded.", "Kritis", "dikerjakan", "usr-teknisi2", 20, 10, 120, 76,
       [["Lepas gearbox rotor utama", true], ["Kirim ke Depo untuk overhaul", true], ["Pasang gearbox cadangan", false], ["Track & balance rotor", false], ["Uji terbang", false]],
       [{ partId: "prt-15", qty: 18 }],
-      [[20, "WO dibuat", "usr-petugas2"], [19, "Ditugaskan ke Sertu Budi Santoso", "usr-petugas2"], [18, "Mulai dikerjakan", "usr-teknisi2"]]),
+      [[20, "WO dibuat", "usr-petugas2"], [19, "Ditugaskan ke Budi Santoso", "usr-petugas2"], [18, "Mulai dikerjakan", "usr-teknisi2"]]),
     wo(5, "ast-003", "Preventif", "Servis 150 jam C-130J AX-1342", "Servis preventif terjadwal sesuai manual perawatan pabrikan.", "Sedang", "baru", undefined, 2, 12, 24, 0,
       [["Penggantian filter oli mesin", false], ["Pelumasan titik-titik kontrol", false], ["Pemeriksaan ban & rem", false]], [], [[2, "WO dibuat", "usr-petugas"]]),
     wo(6, "ast-008", "Korektif", "Perbaikan modul GPS LX-0117", "Modul GPS/NAV kehilangan sinyal berulang saat navigasi lintas medan.", "Sedang", "baru", "usr-teknisi3", 3, 7, 6, 0,
-      [["Uji fungsi modul GPS", false], ["Ganti modul bila perlu", false], ["Uji darat & kalibrasi", false]], [], [[3, "WO dibuat", "usr-petugas"], [2, "Ditugaskan ke Peltu Citra Ramadhani", "usr-petugas"]]),
+      [["Uji fungsi modul GPS", false], ["Ganti modul bila perlu", false], ["Uji darat & kalibrasi", false]], [], [[3, "WO dibuat", "usr-petugas"], [2, "Ditugaskan ke Citra Ramadhani", "usr-petugas"]]),
     wo(7, "ast-005", "Inspeksi Berkala", "Inspeksi 150 jam C295 AX-2905", "Inspeksi berkala, termasuk pemeriksaan retak pada flap kanan yang dilaporkan pilot.", "Tinggi", "dikerjakan", "usr-teknisi", 6, 5, 40, 18,
       [["Inspeksi flap kanan (NDT)", true], ["Penggantian igniter plug", false], ["Pemeriksaan avionik", false]],
       [{ partId: "prt-06", qty: 2 }],
@@ -353,7 +353,7 @@ function makeStockMovements(now: number): StockMovement[] {
 function makeFlightLogs(now: number, assets: Asset[], users: User[]): FlightLog[] {
   const r = rng(7);
   const logs: FlightLog[] = [];
-  const pilots = ["Kapten Pnb Rizky Hidayat", "Mayor Pnb Yoga Pratama", "Lettu Pnb Nadia Putri", "Kapten Pnb Arif Wibowo", "Lettu Pnb Galih Saputra", "Mayor Pnb Teguh Santosa"];
+  const pilots = ["Rizky Hidayat", "Yoga Pratama", "Nadia Putri", "Arif Wibowo", "Galih Saputra", "Teguh Santosa"];
   const routes = ["Semarang – Jakarta – Semarang", "Semarang – Makassar", "Balikpapan – Tarakan – Balikpapan", "Latihan lokal", "Patroli Selat Makassar", "Kupang – Balikpapan"];
   const flying = assets.filter((a) => a.aviation && a.status === "Aktif");
   let n = 0;
@@ -371,7 +371,7 @@ function makeFlightLogs(now: number, assets: Asset[], users: User[]): FlightLog[
         mission: missions[Math.floor(r() * missions.length)],
         hours,
         cycles: isUav ? 1 : 1 + Math.floor(r() * (isHeli ? 4 : 2)),
-        pilot: isUav ? "Operator GCS " + ["Lettu Sus Bima", "Serma Eko"][Math.floor(r() * 2)] : pilots[Math.floor(r() * pilots.length)],
+        pilot: isUav ? "Operator GCS " + ["Bima Arya", "Eko Saputra"][Math.floor(r() * 2)] : pilots[Math.floor(r() * pilots.length)],
         route: isUav ? "Area patroli sektor timur" : routes[Math.floor(r() * routes.length)],
         createdBy: users[3].id,
       });

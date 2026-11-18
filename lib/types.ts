@@ -8,7 +8,6 @@ export interface User {
   username: string;
   password: string; // demo only, stored in plain text
   name: string;
-  rank: string; // pangkat, e.g. "Mayor Tek"
   nrp: string; // nomor registrasi pokok
   position: string; // jabatan
   role: Role;

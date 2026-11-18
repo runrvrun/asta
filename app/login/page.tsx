@@ -38,7 +38,7 @@ export default function LoginPage() {
     if (found && !found.active) { setError("Akun ini dinonaktifkan. Hubungi administrator."); return; }
     const user = login(u, p);
     if (!user) { setError("Nama pengguna atau kata sandi salah."); return; }
-    toast.success(`Selamat datang, ${user.rank} ${user.name}`);
+    toast.success(`Selamat datang, ${user.name}`);
     router.replace("/dashboard");
   };
 
@@ -96,7 +96,7 @@ export default function LoginPage() {
                 return (
                   <button key={d.username} type="button" className="demo-account" onClick={() => { setUsername(d.username); setPassword(DEMO_PASSWORD); submit(d.username, u?.password ?? DEMO_PASSWORD); }}>
                     <b>{ROLE_LABEL[d.role]}</b>
-                    <span>{d.username}{u ? ` · ${u.rank} ${u.name}` : ""}</span>
+                    <span>{d.username}{u ? ` · ${u.name}` : ""}</span>
                   </button>
                 );
               })}

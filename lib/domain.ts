@@ -11,7 +11,7 @@ export const byId = <T extends { id: string }>(list: T[], id?: string) => (id ? 
 
 export function userName(db: DB, id?: string) {
   const u = byId(db.users, id);
-  return u ? `${u.rank} ${u.name}` : id === "system" ? "Sistem" : "-";
+  return u ? `${u.name}` : id === "system" ? "Sistem" : "-";
 }
 export function unitName(db: DB, id?: string) {
   return byId(db.units, id)?.name ?? "-";

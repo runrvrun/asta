@@ -295,7 +295,7 @@ function AssignDialog({ open, onClose, wo, db, onSave }: { open: boolean; onClos
           <label key={t.id} className="row" style={{ border: `1.5px solid ${tid === t.id ? "var(--blue)" : "var(--panel2)"}`, borderRadius: 10, padding: 10, cursor: "pointer", flexWrap: "nowrap" }}>
             <input type="radio" name="tech" checked={tid === t.id} onChange={() => setTid(t.id)} style={{ accentColor: "var(--blue)" }} />
             <div style={{ flex: 1 }}>
-              <div className="cell-strong">{t.rank} {t.name}</div>
+              <div className="cell-strong">{t.name}</div>
               <div className="cell-sub">{t.position} · {unitName(db, t.unitId)}</div>
             </div>
             <span className="chip">{load(t.id)} WO aktif</span>

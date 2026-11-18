@@ -10,7 +10,6 @@ import { formatDateTime, initials } from "@/lib/format";
 import type { Role, User } from "@/lib/types";
 
 const ROLES: Role[] = ["admin", "pimpinan", "petugas", "teknisi", "auditor"];
-const RANKS = ["Kolonel", "Letkol", "Mayor", "Kapten", "Lettu", "Letda", "Peltu", "Pelda", "Serma", "Serka", "Sertu", "Serda", "Kopka", "Praka", "PNS III/a", "PNS III/b", "PNS III/c", "PNS III/d", "PNS IV/a"];
 
 const MATRIX: { label: string; perm: Permission }[] = [
   { label: "Mendaftarkan & mengubah aset", perm: "asset.edit" },
@@ -26,7 +25,7 @@ const MATRIX: { label: string; perm: Permission }[] = [
 ];
 
 type Draft = Omit<User, "id" | "lastLogin">;
-const EMPTY: Draft = { username: "", password: "", name: "", rank: "Kapten", nrp: "", position: "", role: "petugas", unitId: "", active: true };
+const EMPTY: Draft = { username: "", password: "", name: "", nrp: "", position: "", role: "petugas", unitId: "", active: true };
 
 export default function PenggunaPage() {
   return <RequireRole roles={["admin"]}><Users /></RequireRole>;
@@ -48,7 +47,7 @@ function Users() {
   const rows = useMemo(() => {
     const s = q.trim().toLowerCase();
     return db.users.filter((u) => (!role || u.role === role) && (!status || (status === "aktif") === u.active)
-      && (!s || [u.name, u.username, u.nrp, u.position, u.rank].some((v) => v.toLowerCase().includes(s))));
+      && (!s || [u.name, u.username, u.nrp, u.position].some((v) => v.toLowerCase().includes(s))));
   }, [db.users, q, role, status]);
 
   const openNew = () => { setErrors({}); setEditing({ draft: { ...EMPTY, unitId: db.units[0]?.id ?? "" } }); };
@@ -71,11 +70,11 @@ function Users() {
     if (Object.keys(err).length) return;
     if (editing.id) {
       mutate((db2) => { const u = db2.users.find((x) => x.id === editing.id)!; Object.assign(u, { ...d, password: u.password, username: d.username.trim(), name: d.name.trim() }); },
-        { action: "Mengubah", module: "Pengguna", ref: d.username, detail: `${d.rank} ${d.name} · ${ROLE_LABEL[d.role]}` });
+        { action: "Mengubah", module: "Pengguna", ref: d.username, detail: `${d.name} · ${ROLE_LABEL[d.role]}` });
       toast.success("Data pengguna diperbarui");
     } else {
       mutate((db2) => { db2.users.push({ ...d, id: uid("usr"), username: d.username.trim(), name: d.name.trim() }); },
-        { action: "Membuat", module: "Pengguna", ref: d.username, detail: `${d.rank} ${d.name} · ${ROLE_LABEL[d.role]}` });
+        { action: "Membuat", module: "Pengguna", ref: d.username, detail: `${d.name} · ${ROLE_LABEL[d.role]}` });
       toast.success("Pengguna baru ditambahkan");
     }
     setEditing(null);
@@ -114,7 +113,7 @@ function Users() {
               <thead><tr><th>Pengguna</th><th>Username</th><th>Peran</th><th>Satuan / jabatan</th><th>Login terakhir</th><th>Status</th><th /></tr></thead>
               <tbody>{rows.map((u) => (
                 <tr key={u.id}>
-                  <td><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="cell-strong">{u.rank} {u.name}</div><div className="cell-sub">NRP {u.nrp}</div></div></div></td>
+                  <td><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="cell-strong">{u.name}</div><div className="cell-sub">NRP {u.nrp}</div></div></div></td>
                   <td className="mono">{u.username}</td>
                   <td><Badge tone={u.role === "admin" ? "critical" : u.role === "pimpinan" ? "warning" : "normal"} dot={false}>{ROLE_LABEL[u.role]}</Badge></td>
                   <td>{unitName(db, u.unitId)}<div className="cell-sub">{u.position}</div></td>
@@ -126,7 +125,7 @@ function Users() {
             </table></div>
             <div className="mobile-only">{rows.map((u) => (
               <div key={u.id} className="list-card">
-                <div className="list-card-top"><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="list-card-title">{u.rank} {u.name}</div><div className="cell-sub">{u.username} · {ROLE_LABEL[u.role]}</div></div></div><Badge tone={u.active ? "normal" : "done"}>{u.active ? "Aktif" : "Nonaktif"}</Badge></div>
+                <div className="list-card-top"><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="list-card-title">{u.name}</div><div className="cell-sub">{u.username} · {ROLE_LABEL[u.role]}</div></div></div><Badge tone={u.active ? "normal" : "done"}>{u.active ? "Aktif" : "Nonaktif"}</Badge></div>
                 <div className="cell-sub">{unitName(db, u.unitId)} · {u.position}</div>
                 <div style={{ marginTop: 10 }}><UserActions u={u} me={me} onEdit={openEdit} onPw={setPwUser} onToggle={setToggle} /></div>
               </div>
@@ -156,7 +155,6 @@ function Users() {
               <Field label="Kata sandi awal" required error={errors.password} hint="Minimal 6 karakter"><input className={`input ${errors.password ? "invalid" : ""}`} value={d.password} onChange={(e) => set("password", e.target.value)} autoComplete="new-password" /></Field>
             ) : <div />}
             <Field label="Nama lengkap" required error={errors.name}><input className={`input ${errors.name ? "invalid" : ""}`} value={d.name} onChange={(e) => set("name", e.target.value)} /></Field>
-            <Field label="Pangkat / golongan"><select className="select" value={d.rank} onChange={(e) => set("rank", e.target.value)}>{(RANKS.includes(d.rank) ? RANKS : [d.rank, ...RANKS]).map((r) => <option key={r}>{r}</option>)}</select></Field>
             <Field label="NRP / NIP" required error={errors.nrp}><input className={`input ${errors.nrp ? "invalid" : ""}`} value={d.nrp} onChange={(e) => set("nrp", e.target.value)} /></Field>
             <Field label="Jabatan"><input className="input" value={d.position} onChange={(e) => set("position", e.target.value)} /></Field>
             <Field label="Satuan" required error={errors.unitId}><select className="select" value={d.unitId} onChange={(e) => set("unitId", e.target.value)}>{db.units.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}</select></Field>
@@ -166,7 +164,7 @@ function Users() {
         )}
       </Modal>
 
-      <Modal open={!!pwUser} onClose={() => { setPwUser(null); setNewPw(""); }} title="Reset kata sandi" subtitle={pwUser ? `${pwUser.rank} ${pwUser.name} (${pwUser.username})` : ""}
+      <Modal open={!!pwUser} onClose={() => { setPwUser(null); setNewPw(""); }} title="Reset kata sandi" subtitle={pwUser ? `${pwUser.name} (${pwUser.username})` : ""}
         footer={<><button className="btn btn-plain" onClick={() => { setPwUser(null); setNewPw(""); }}>Batal</button><button className="btn btn-primary" onClick={resetPw}>Simpan kata sandi</button></>}>
         <Field label="Kata sandi baru" required hint="Minimal 6 karakter. Sampaikan kepada pengguna melalui jalur resmi."><input className="input" value={newPw} onChange={(e) => setNewPw(e.target.value)} autoFocus autoComplete="new-password" /></Field>
       </Modal>
@@ -174,7 +172,7 @@ function Users() {
       <ConfirmDialog open={!!toggle} onClose={() => setToggle(null)} danger={toggle?.active}
         title={toggle?.active ? "Nonaktifkan pengguna?" : "Aktifkan pengguna?"}
         confirmLabel={toggle?.active ? "Nonaktifkan" : "Aktifkan"}
-        message={toggle ? (toggle.active ? `${toggle.rank} ${toggle.name} tidak akan dapat masuk sampai diaktifkan kembali.` : `${toggle.rank} ${toggle.name} akan dapat masuk kembali.`) : ""}
+        message={toggle ? (toggle.active ? `${toggle.name} tidak akan dapat masuk sampai diaktifkan kembali.` : `${toggle.name} akan dapat masuk kembali.`) : ""}
         onConfirm={() => toggle && doToggle(toggle)} />
     </div>
   );

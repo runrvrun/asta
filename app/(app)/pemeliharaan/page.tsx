@@ -114,7 +114,7 @@ export default function WorkOrderListPage() {
             <select className="select" value={assignee} onChange={(e) => setAssignee(e.target.value)}>
               <option value="">Semua teknisi</option>
               <option value="-">Belum ditugaskan</option>
-              {technicians.map((t) => <option key={t.id} value={t.id}>{t.rank} {t.name}</option>)}
+              {technicians.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
           )}
           <label className="checkbox"><input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} />Tugas saya</label>

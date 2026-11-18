@@ -167,7 +167,7 @@ function NewWorkOrderForm() {
               <Field label="Teknisi">
                 <select className="select" value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}>
                   <option value="">Belum ditugaskan</option>
-                  {technicians.map((t) => <option key={t.id} value={t.id}>{t.rank} {t.name} · {t.position}</option>)}
+                  {technicians.map((t) => <option key={t.id} value={t.id}>{t.name} · {t.position}</option>)}
                 </select>
               </Field>
               <Field label="Target selesai" required error={errors.dueDate}>

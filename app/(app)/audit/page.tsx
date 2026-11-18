@@ -43,7 +43,7 @@ function AuditTrail() {
       <div className="panel">
         <div className="toolbar">
           <SearchBox value={q} onChange={setQ} placeholder="Cari referensi, detail, pengguna..." />
-          <select className="select" value={userId} onChange={(e) => setUserId(e.target.value)} aria-label="Pengguna"><option value="">Semua pengguna</option>{db.users.map((u) => <option key={u.id} value={u.id}>{u.rank} {u.name}</option>)}</select>
+          <select className="select" value={userId} onChange={(e) => setUserId(e.target.value)} aria-label="Pengguna"><option value="">Semua pengguna</option>{db.users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}</select>
           <select className="select" value={mod} onChange={(e) => setMod(e.target.value)} aria-label="Modul"><option value="">Semua modul</option>{modules.map((m) => <option key={m}>{m}</option>)}</select>
           <select className="select" value={action} onChange={(e) => setAction(e.target.value)} aria-label="Aksi"><option value="">Semua aksi</option>{actions.map((m) => <option key={m}>{m}</option>)}</select>
           <input type="date" className="input" value={from} onChange={(e) => setFrom(e.target.value)} aria-label="Dari" />

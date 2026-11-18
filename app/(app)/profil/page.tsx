@@ -46,7 +46,7 @@ export default function ProfilPage() {
           <Panel title="Data pengguna" actions={!edit && <button className="btn btn-secondary btn-sm" onClick={() => { setName(user.name); setPosition(user.position); setEdit(true); }}><Icon name="edit" />Ubah</button>}>
             <div className="row" style={{ marginBottom: 16, flexWrap: "nowrap" }}>
               <div className="avatar" style={{ width: 56, height: 56, fontSize: 18 }}>{initials(user.name)}</div>
-              <div><div className="cell-strong" style={{ fontSize: 16 }}>{user.rank} {user.name}</div><div className="muted small">{user.position}</div></div>
+              <div><div className="cell-strong" style={{ fontSize: 16 }}>{user.name}</div><div className="muted small">{user.position}</div></div>
             </div>
             {edit ? (
               <div className="form-grid">
@@ -60,14 +60,13 @@ export default function ProfilPage() {
             ) : (
               <div className="kv-grid cols-3">
                 <KV label="Nama pengguna">{user.username}</KV>
-                <KV label="Pangkat">{user.rank}</KV>
                 <KV label="NRP / NIP">{user.nrp}</KV>
                 <KV label="Peran">{ROLE_LABEL[user.role]}</KV>
                 <KV label="Satuan">{unitName(db, user.unitId)}</KV>
                 <KV label="Login terakhir">{formatDateTime(user.lastLogin)}</KV>
               </div>
             )}
-            <div className="alert info" style={{ marginTop: 16, marginBottom: 0 }}><Icon name="info" />{ROLE_DESC[user.role]}. Pangkat, peran, dan satuan hanya dapat diubah administrator.</div>
+            <div className="alert info" style={{ marginTop: 16, marginBottom: 0 }}><Icon name="info" />{ROLE_DESC[user.role]}. Peran dan satuan hanya dapat diubah administrator.</div>
           </Panel>
 
           <Panel title="Ganti kata sandi">
