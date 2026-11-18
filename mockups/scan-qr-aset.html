@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan QR Aset — AeroAset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2A4A; --blue:#1B5FA8; --blue-bright:#2E86D6; --blue-light:#8FC6EE; --blue-pale:#BEDBF2;
+    --white:#FFFFFF; --panel:#F4F9FD; --panel2:#E3F0FA; --text:#0B2A4A; --text-secondary:rgba(11,42,74,0.7);
+    --critical:#A8503A; --warning:#B57A1F; --normal:#1B5FA8; --radius:10px;
+    --shadow: 0 1px 2px rgba(11,42,74,0.04), 0 4px 14px rgba(11,42,74,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:'Open Sans', sans-serif;background:var(--panel);color:var(--text);font-size:14px;line-height:1.5;-webkit-tap-highlight-color:transparent;}
+  h1,h2,h3,h4,.font-head{font-family:'Montserrat', sans-serif;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;}
+
+  .app{min-height:100vh;display:flex;flex-direction:column;}
+  .body-row{flex:1;display:flex;}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .content{padding:16px 16px 100px;flex:1;max-width:1180px;width:100%;margin:0 auto;}
+
+  .sidebar{display:none;}
+  @media (min-width:1024px){
+    .sidebar{display:block;width:240px;flex-shrink:0;background:var(--navy);color:#D6E7F8;padding:24px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .content{padding:28px 32px 44px;max-width:none;margin:0;}
+  }
+  .sidebar .brand{display:flex;align-items:center;gap:10px;padding:0 8px 22px 8px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .sidebar .brand .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue-bright),var(--blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sidebar .brand .logo-mark svg{width:18px;height:18px;}
+  .sidebar .brand-text{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14.5px;color:#fff;line-height:1.2;}
+  .sidebar .brand-text span{display:block;font-family:'Open Sans',sans-serif;font-weight:400;font-size:11px;color:var(--blue-light);letter-spacing:.03em;}
+  .nav-section-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-light);padding:14px 10px 8px;font-weight:600;}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;font-size:13.5px;font-weight:500;color:#CBE0F5;margin-bottom:2px;cursor:pointer;transition:background .15s;}
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.9;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);}
+  .nav-item.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(27,95,168,0.35);}
+  .nav-item.active svg{opacity:1;}
+
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--navy);display:flex;justify-content:space-around;align-items:stretch;padding:4px 4px calc(4px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(11,42,74,0.18);}
+  @media (min-width:1024px){ .bottom-nav{display:none;} }
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#9FBEDD;padding:7px 2px;min-height:48px;border-radius:8px;font-size:10.5px;font-weight:600;}
+  .bn-item svg{width:20px;height:20px;}
+  .bn-item.active{color:#fff;background:rgba(255,255,255,0.08);}
+
+  .topbar{background:var(--white);border-bottom:1px solid var(--panel2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:20;}
+  @media (min-width:1024px){ .topbar{padding:16px 32px;} }
+  .topbar-title{display:flex;align-items:center;gap:10px;min-width:0;}
+  .back-btn{width:36px;height:36px;border-radius:9px;background:var(--panel);border:1px solid var(--panel2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);}
+  .back-btn svg{width:18px;height:18px;}
+  .topbar h1{font-size:17px;font-weight:700;color:var(--navy);margin:0;}
+  .topbar .subtitle{font-size:12px;color:var(--text-secondary);margin-top:1px;}
+  .avatar-wrap{display:flex;align-items:center;gap:10px;}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue-bright),var(--navy));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12.5px;font-family:'Montserrat',sans-serif;flex-shrink:0;}
+  .avatar-meta{display:none;}
+  @media (min-width:640px){ .avatar-meta{display:block;} .avatar-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.2;} .avatar-role{font-size:11px;color:var(--text-secondary);} }
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;border:none;min-height:44px;white-space:nowrap;transition:filter .15s, background .15s;}
+  .btn svg{width:16px;height:16px;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-secondary{background:var(--white);color:var(--blue);border:1.5px solid var(--blue);}
+  .btn-secondary:hover{background:var(--panel2);}
+  .btn-ghost{background:transparent;color:var(--text-secondary);}
+  .btn-block{width:100%;}
+
+  .panel{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--panel2);padding:18px;}
+  .section-title{font-size:15.5px;font-weight:700;color:var(--navy);margin:0 0 4px;}
+  .section-sub{font-size:12.5px;color:var(--text-secondary);margin:0 0 16px;}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+  .badge-dot{width:6px;height:6px;border-radius:50%;}
+  .badge.normal{background:rgba(27,95,168,0.12);color:var(--normal);}
+  .badge.normal .badge-dot{background:var(--normal);}
+  .badge.warning{background:rgba(181,122,31,0.14);color:var(--warning);}
+  .badge.warning .badge-dot{background:var(--warning);}
+  .badge.critical{background:rgba(168,80,58,0.12);color:var(--critical);}
+  .badge.critical .badge-dot{background:var(--critical);}
+
+  .footer{padding:16px;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  @media (min-width:1024px){ .footer{display:flex;padding:16px 32px 22px;} }
+  .footer-accent{display:flex;height:5px;width:120px;border-radius:4px;overflow:hidden;}
+  .footer-accent span{flex:1;}
+  .footer-text{font-size:11.5px;color:var(--text-secondary);}
+
+  /* ===== Scan-specific ===== */
+  .scan-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:1024px){ .scan-grid{grid-template-columns:0.9fr 1.1fr;align-items:start;} }
+
+  .camera-view{
+    position:relative;background:linear-gradient(160deg,#0B2A4A 0%, #123A63 55%, #16497D 100%);
+    border-radius:14px;aspect-ratio:3/4;max-height:420px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .camera-view::before{
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
+  }
+  .scan-frame{
+    position:relative;width:64%;aspect-ratio:1/1;
+  }
+  .scan-frame .corner{position:absolute;width:26px;height:26px;border:3px solid var(--blue-bright);}
+  .scan-frame .tl{top:0;left:0;border-right:none;border-bottom:none;border-radius:6px 0 0 0;}
+  .scan-frame .tr{top:0;right:0;border-left:none;border-bottom:none;border-radius:0 6px 0 0;}
+  .scan-frame .bl{bottom:0;left:0;border-right:none;border-top:none;border-radius:0 0 0 6px;}
+  .scan-frame .br{bottom:0;right:0;border-left:none;border-top:none;border-radius:0 0 6px 0;}
+  .scan-line{position:absolute;left:4%;right:4%;height:2px;background:linear-gradient(90deg, transparent, var(--blue-bright), transparent);animation:scanmove 2.2s ease-in-out infinite;box-shadow:0 0 8px 1px rgba(46,134,214,0.8);}
+  @keyframes scanmove{0%{top:6%;}50%{top:92%;}100%{top:6%;}}
+  .camera-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#CFE3F8;font-size:12px;font-weight:600;letter-spacing:.02em;}
+  .camera-topbar{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;}
+  .cam-pill{background:rgba(255,255,255,0.12);color:#fff;border:none;border-radius:20px;padding:8px 12px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:6px;min-height:36px;}
+  .cam-pill svg{width:15px;height:15px;}
+  .cam-pill.active{background:var(--blue-bright);}
+
+  .manual-input{display:flex;gap:8px;margin-top:14px;}
+  .manual-input input{flex:1;border:1.5px solid var(--panel2);border-radius:9px;padding:11px 12px;font-size:13.5px;min-height:44px;font-family:'Open Sans',sans-serif;color:var(--navy);}
+  .manual-input input:focus{outline:none;border-color:var(--blue);}
+
+  .demo-toggle{display:block;text-align:center;margin-top:12px;font-size:12.5px;color:var(--blue);font-weight:700;cursor:pointer;}
+  @media (min-width:1024px){ .demo-toggle{display:none;} }
+
+  .result-hidden-mobile{display:none;}
+  @media (min-width:1024px){ .result-hidden-mobile{display:block;} }
+  .scan-hidden-mobile-off{}
+
+  .asset-photo{
+    width:100%;aspect-ratio:16/10;border-radius:12px;background:linear-gradient(135deg,var(--panel2),var(--blue-pale));
+    display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:14px;
+  }
+  .asset-photo svg{width:44px;height:44px;}
+  .asset-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;flex-wrap:wrap;}
+  .asset-name{font-size:16.5px;font-weight:700;color:var(--navy);}
+  .asset-code{font-size:12.5px;color:var(--text-secondary);font-weight:600;margin-bottom:14px;}
+
+  .kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;margin-bottom:16px;}
+  @media (max-width:420px){ .kv-grid{grid-template-columns:1fr;} }
+  .kv-label{font-size:11px;color:var(--text-secondary);font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;}
+  .kv-value{font-size:13.5px;font-weight:600;color:var(--navy);}
+
+  .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+  .qa-btn{
+    display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:11px;
+    background:var(--panel);border:1px solid var(--panel2);color:var(--navy);font-size:12px;font-weight:700;text-align:center;min-height:44px;cursor:pointer;
+  }
+  .qa-btn:hover{background:var(--panel2);}
+  .qa-btn svg{width:20px;height:20px;color:var(--blue);}
+
+  .mini-timeline{margin-top:4px;}
+  .mini-timeline-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--panel);}
+  .mini-timeline-item:last-child{border-bottom:none;}
+  .mini-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:5px;flex-shrink:0;}
+  .mini-text{font-size:13px;color:var(--navy);font-weight:600;}
+  .mini-meta{font-size:11.5px;color:var(--text-secondary);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="body-row">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 19h20L12 2z"/></svg></div><div class="brand-text">AeroAset<span>Manajemen Aset Aviasi</span></div></div>
+      <div class="nav-section-label">Utama</div>
+      <a class="nav-item" href="dashboard-eksekutif.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</a>
+      <a class="nav-item active" href="scan-qr-aset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Scan QR Aset</a>
+      <div class="nav-section-label">Aset &amp; Operasional</div>
+      <a class="nav-item" href="pendaftaran-aset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Inventaris Aset</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>Pengadaan &amp; Penerimaan</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>Penempatan &amp; Distribusi</a>
+      <a class="nav-item" href="work-order.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.77z"/></svg>Pemeliharaan</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>Penilaian &amp; Penyusutan</a>
+      <a class="nav-item" href="persetujuan-penghapusan.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Penghapusan Aset</a>
+      <div class="nav-section-label">Kendali &amp; Pelaporan</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Audit &amp; Monitoring</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>Pelaporan</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Manajemen Pengguna</a>
+      <div class="nav-section-label">Khusus Aviasi</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.6 1.6 0 0 0-2.3-2.3L13.7 8.7 5.5 6.9a1 1 0 0 0-1 1.7l6 4-2 2-3-1-1 1 3 2 2 3 1-1-1-3 2-2 4 6a1 1 0 0 0 1.7-1z"/></svg>Armada Pesawat</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Komponen &amp; Suku Cadang</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>Safety Management System</a>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title">
+          <a class="back-btn" href="dashboard-eksekutif.html" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+          <div><h1>Scan QR Aset</h1><div class="subtitle">Pindai label QR untuk melihat detail &amp; riwayat aset</div></div>
+        </div>
+        <div class="avatar-wrap">
+          <div class="avatar">RS</div>
+          <div class="avatar-meta"><div class="avatar-name">Rina Setiawan</div><div class="avatar-role">Direktur Teknik &amp; Aset</div></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="scan-grid">
+
+          <!-- SCAN PANEL -->
+          <div id="scanPanel">
+            <div class="panel">
+              <div class="section-title">Pemindai QR</div>
+              <div class="section-sub">Arahkan kamera ke label QR pada aset</div>
+              <div class="camera-view">
+                <div class="camera-topbar">
+                  <button class="cam-pill" id="flashBtn" onclick="toggleFlash()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-14h-8l1-6z"/></svg>
+                    Flash
+                  </button>
+                  <button class="cam-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Ganti</button>
+                </div>
+                <div class="scan-frame">
+                  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+                  <div class="scan-line"></div>
+                </div>
+                <div class="camera-hint">Memindai... posisikan QR dalam bingkai</div>
+              </div>
+              <div class="manual-input">
+                <input type="text" id="manualCode" placeholder="Atau ketik kode aset, mis. AST-2024-03-0562" value="AST-2024-03-0562">
+                <button class="btn btn-primary" onclick="simulateScan()">Cari</button>
+              </div>
+              <div class="demo-toggle" onclick="simulateScan()">Simulasikan hasil scan &rarr;</div>
+            </div>
+          </div>
+
+          <!-- RESULT PANEL -->
+          <div id="resultPanel" class="result-hidden-mobile">
+            <div class="panel">
+              <div class="asset-photo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.77z"/></svg>
+              </div>
+              <div class="asset-head">
+                <div>
+                  <div class="asset-name">Landing Gear Assembly — Boeing 737-800NG</div>
+                  <div class="asset-code">AST-2024-03-0562 · Komponen &amp; Suku Cadang</div>
+                </div>
+                <span class="badge normal"><span class="badge-dot"></span>Normal</span>
+              </div>
+
+              <div class="kv-grid">
+                <div><div class="kv-label">Lokasi</div><div class="kv-value">Hangar 2 · Rak B-14</div></div>
+                <div><div class="kv-label">Penanggung Jawab</div><div class="kv-value">Andi Prasetyo</div></div>
+                <div><div class="kv-label">Status Kelaikan</div><div class="kv-value">Layak Operasi</div></div>
+                <div><div class="kv-label">Jadwal Pemeliharaan</div><div class="kv-value">15 Sep 2026 · C-Check</div></div>
+              </div>
+
+              <div class="quick-actions">
+                <div class="qa-btn" onclick="alert('Form catat kondisi (dummy).')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  Catat Kondisi
+                </div>
+                <div class="qa-btn" onclick="window.location.href='work-order.html'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+                  Buat Work Order
+                </div>
+                <div class="qa-btn" onclick="alert('Form ajukan mutasi (dummy).')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+                  Ajukan Mutasi
+                </div>
+                <div class="qa-btn" onclick="alert('Form laporan kerusakan (dummy).')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Lapor Kerusakan
+                </div>
+              </div>
+
+              <div class="section-title" style="font-size:13.5px;margin-top:6px;">Riwayat Aktivitas Terakhir</div>
+              <div class="mini-timeline">
+                <div class="mini-timeline-item">
+                  <div class="mini-dot"></div>
+                  <div><div class="mini-text">Inspeksi rutin selesai, tidak ada temuan</div><div class="mini-meta">12 Agu 2026 · Teknisi Andi Prasetyo</div></div>
+                </div>
+                <div class="mini-timeline-item">
+                  <div class="mini-dot"></div>
+                  <div><div class="mini-text">Dipindahkan dari Hangar 1 ke Hangar 2</div><div class="mini-meta">03 Jul 2026 · Penempatan &amp; Distribusi</div></div>
+                </div>
+                <div class="mini-timeline-item">
+                  <div class="mini-dot"></div>
+                  <div><div class="mini-text">Kalibrasi ulang komponen selesai</div><div class="mini-meta">20 Mei 2026 · Bengkel Teknik</div></div>
+                </div>
+              </div>
+              <div class="demo-toggle" onclick="backToScan()">&larr; Kembali ke pemindai</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>
+          <div class="footer-accent"><span style="background:#0B2A4A"></span><span style="background:#1B5FA8"></span><span style="background:#8FC6EE"></span></div>
+          <div class="footer-text" style="margin-top:8px;">AeroAset · Sistem Manajemen Aset Aviasi © 2026</div>
+        </div>
+        <div class="footer-text">Data ditampilkan bersifat ilustratif untuk keperluan presentasi</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bn-item" href="dashboard-eksekutif.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</a>
+    <a class="bn-item" href="pendaftaran-aset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Aset</a>
+    <a class="bn-item active" href="scan-qr-aset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Scan</a>
+    <a class="bn-item" href="work-order.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>WO</a>
+    <a class="bn-item" href="persetujuan-penghapusan.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>Approval</a>
+  </nav>
+</div>
+
+<script>
+  let flashOn = false;
+  function toggleFlash(){
+    flashOn = !flashOn;
+    document.getElementById('flashBtn').classList.toggle('active', flashOn);
+  }
+  function simulateScan(){
+    if(window.innerWidth < 1024){
+      document.getElementById('scanPanel').style.display = 'none';
+      document.getElementById('resultPanel').style.display = 'block';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  }
+  function backToScan(){
+    document.getElementById('resultPanel').style.display = 'none';
+    document.getElementById('scanPanel').style.display = 'block';
+  }
+  // initial mobile state: show scan view only
+  function applyResponsiveDefault(){
+    if(window.innerWidth < 1024){
+      document.getElementById('resultPanel').style.display = 'none';
+    } else {
+      document.getElementById('resultPanel').style.display = 'block';
+      document.getElementById('scanPanel').style.display = 'block';
+    }
+  }
+  window.addEventListener('resize', applyResponsiveDefault);
+  applyResponsiveDefault();
+</script>
+
+</body>
+</html>

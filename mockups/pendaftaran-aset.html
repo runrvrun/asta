@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendaftaran Aset Baru — AeroAset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2A4A;
+    --blue:#1B5FA8;
+    --blue-bright:#2E86D6;
+    --blue-light:#8FC6EE;
+    --blue-pale:#BEDBF2;
+    --white:#FFFFFF;
+    --panel:#F4F9FD;
+    --panel2:#E3F0FA;
+    --text:#0B2A4A;
+    --text-secondary:rgba(11,42,74,0.7);
+    --critical:#A8503A;
+    --warning:#B57A1F;
+    --normal:#1B5FA8;
+    --radius:10px;
+    --shadow: 0 1px 2px rgba(11,42,74,0.04), 0 4px 14px rgba(11,42,74,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Open Sans', sans-serif;
+    background:var(--panel);
+    color:var(--text);
+    font-size:14px;
+    line-height:1.5;
+    -webkit-tap-highlight-color:transparent;
+  }
+  h1,h2,h3,h4,.font-head{font-family:'Montserrat', sans-serif;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;}
+  ::placeholder{color:#9BB3C9;}
+
+  /* ===== Layout ===== */
+  .app{min-height:100vh;display:flex;flex-direction:column;}
+  .body-row{flex:1;display:flex;}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .content{padding:20px 16px 110px;flex:1;max-width:1180px;width:100%;margin:0 auto;}
+
+  /* ===== Sidebar (desktop) ===== */
+  .sidebar{display:none;}
+  @media (min-width:1024px){
+    .body-row{position:relative;}
+    .sidebar{
+      display:block;
+      width:240px;flex-shrink:0;
+      background:var(--navy);
+      color:#D6E7F8;
+      padding:24px 16px;
+      position:sticky;top:0;height:100vh;overflow-y:auto;
+    }
+    .content{padding:28px 32px 44px;max-width:none;margin:0;}
+  }
+  .sidebar .brand{
+    display:flex;align-items:center;gap:10px;
+    padding:0 8px 22px 8px;margin-bottom:14px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar .brand .logo-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--blue-bright),var(--blue));
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .sidebar .brand .logo-mark svg{width:18px;height:18px;}
+  .sidebar .brand-text{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14.5px;color:#fff;line-height:1.2;}
+  .sidebar .brand-text span{display:block;font-family:'Open Sans',sans-serif;font-weight:400;font-size:11px;color:var(--blue-light);letter-spacing:.03em;}
+  .nav-section-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-light);padding:14px 10px 8px;font-weight:600;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;
+    font-size:13.5px;font-weight:500;color:#CBE0F5;margin-bottom:2px;cursor:pointer;transition:background .15s;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.9;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);}
+  .nav-item.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(27,95,168,0.35);}
+  .nav-item.active svg{opacity:1;}
+
+  /* ===== Bottom nav (mobile) ===== */
+  .bottom-nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:var(--navy);
+    display:flex;justify-content:space-around;align-items:stretch;
+    padding:4px 4px calc(4px + env(safe-area-inset-bottom));
+    box-shadow:0 -2px 12px rgba(11,42,74,0.18);
+  }
+  @media (min-width:1024px){ .bottom-nav{display:none;} }
+  .bn-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    color:#9FBEDD;padding:7px 2px;min-height:48px;border-radius:8px;font-size:10.5px;font-weight:600;
+  }
+  .bn-item svg{width:20px;height:20px;}
+  .bn-item.active{color:#fff;background:rgba(255,255,255,0.08);}
+
+  /* ===== Topbar ===== */
+  .topbar{
+    background:var(--white);border-bottom:1px solid var(--panel2);
+    padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    position:sticky;top:0;z-index:20;
+  }
+  @media (min-width:1024px){ .topbar{padding:16px 32px;} }
+  .topbar-title{display:flex;align-items:center;gap:10px;min-width:0;}
+  .back-btn{
+    width:36px;height:36px;border-radius:9px;background:var(--panel);border:1px solid var(--panel2);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);
+  }
+  .back-btn svg{width:18px;height:18px;}
+  .topbar h1{font-size:17px;font-weight:700;color:var(--navy);margin:0;}
+  .topbar .subtitle{font-size:12px;color:var(--text-secondary);margin-top:1px;}
+  .avatar-wrap{display:flex;align-items:center;gap:10px;}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue-bright),var(--navy));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12.5px;font-family:'Montserrat',sans-serif;flex-shrink:0;
+  }
+  .avatar-meta{display:none;}
+  @media (min-width:640px){
+    .avatar-meta{display:block;}
+    .avatar-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.2;}
+    .avatar-role{font-size:11px;color:var(--text-secondary);}
+  }
+
+  /* ===== Buttons ===== */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:9px;padding:11px 18px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;
+    min-height:44px;white-space:nowrap;transition:filter .15s, background .15s;
+  }
+  .btn svg{width:16px;height:16px;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-secondary{background:var(--white);color:var(--blue);border:1.5px solid var(--blue);}
+  .btn-secondary:hover{background:var(--panel2);}
+  .btn-ghost{background:transparent;color:var(--text-secondary);}
+  .btn-danger{background:var(--critical);color:#fff;}
+  .btn-block{width:100%;}
+  .btn-sm{padding:8px 12px;font-size:12.5px;min-height:36px;}
+
+  /* ===== Cards / panels ===== */
+  .panel{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--panel2);padding:18px;}
+  .section-title{font-size:15.5px;font-weight:700;color:var(--navy);margin:0 0 4px;}
+  .section-sub{font-size:12.5px;color:var(--text-secondary);margin:0 0 16px;}
+
+  /* ===== Badges ===== */
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+  .badge-dot{width:6px;height:6px;border-radius:50%;}
+  .badge.normal{background:rgba(27,95,168,0.12);color:var(--normal);}
+  .badge.normal .badge-dot{background:var(--normal);}
+  .badge.warning{background:rgba(181,122,31,0.14);color:var(--warning);}
+  .badge.warning .badge-dot{background:var(--warning);}
+  .badge.critical{background:rgba(168,80,58,0.12);color:var(--critical);}
+  .badge.critical .badge-dot{background:var(--critical);}
+
+  /* ===== Stepper ===== */
+  .stepper{display:flex;align-items:flex-start;gap:0;margin-bottom:24px;overflow-x:auto;}
+  .step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:76px;position:relative;}
+  .step-circle{
+    width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;font-family:'Montserrat',sans-serif;
+    background:var(--panel2);color:var(--text-secondary);border:2px solid var(--panel2);z-index:2;
+  }
+  .step-label{font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-top:8px;text-align:center;max-width:100px;}
+  .step-line{position:absolute;top:17px;left:calc(-50% + 17px);right:calc(50% + 17px);height:2px;background:var(--panel2);z-index:1;}
+  .step:first-child .step-line{display:none;}
+  .step.done .step-circle{background:var(--blue-light);border-color:var(--blue-light);color:#fff;}
+  .step.done .step-label{color:var(--navy);}
+  .step.done .step-line{background:var(--blue-light);}
+  .step.active .step-circle{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(27,95,168,0.35);}
+  .step.active .step-label{color:var(--navy);}
+  .step.active ~ .step .step-line{background:var(--panel2);}
+
+  /* ===== Forms ===== */
+  .form-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:768px){ .form-grid{grid-template-columns:1fr 1fr;} }
+  .form-grid.full{grid-template-columns:1fr;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group.span-2{grid-column:1 / -1;}
+  label{font-size:12.5px;font-weight:700;color:var(--navy);}
+  label .opt{font-weight:400;color:var(--text-secondary);}
+  input[type=text],input[type=date],input[type=number],select,textarea{
+    border:1.5px solid var(--panel2);border-radius:9px;padding:11px 12px;font-size:13.5px;
+    font-family:'Open Sans',sans-serif;color:var(--navy);background:var(--white);outline:none;min-height:44px;
+    width:100%;
+  }
+  textarea{min-height:88px;resize:vertical;}
+  input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+  input[readonly]{background:var(--panel);color:var(--text-secondary);}
+  .field-hint{font-size:11.5px;color:var(--text-secondary);}
+  .input-affix{position:relative;}
+  .input-affix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-secondary);font-weight:600;font-size:13px;}
+  .input-affix input{padding-left:38px;}
+
+  /* ===== Dropzone ===== */
+  .dropzone{
+    border:2px dashed var(--blue-light);border-radius:12px;background:var(--panel);
+    padding:26px 16px;text-align:center;color:var(--text-secondary);cursor:pointer;transition:background .15s,border-color .15s;
+  }
+  .dropzone:hover,.dropzone.drag{background:var(--panel2);border-color:var(--blue);}
+  .dropzone svg{width:30px;height:30px;color:var(--blue);margin-bottom:8px;}
+  .dropzone strong{color:var(--navy);}
+  .file-chip-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .file-chip{
+    display:flex;align-items:center;gap:6px;background:var(--panel2);border-radius:20px;padding:6px 12px 6px 8px;font-size:12px;font-weight:600;color:var(--navy);
+  }
+  .file-chip svg{width:14px;height:14px;color:var(--blue);}
+
+  /* ===== QR preview ===== */
+  .qr-box{
+    background:var(--white);border:1px solid var(--panel2);border-radius:12px;padding:16px;text-align:center;
+  }
+  .qr-pattern{
+    width:130px;height:130px;margin:0 auto 10px;display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);
+    background:#fff;border:6px solid #fff;box-shadow:0 0 0 1px var(--panel2);border-radius:6px;
+  }
+  .qr-pattern div{background:var(--navy);}
+  .qr-pattern div.off{background:transparent;}
+  .qr-code-text{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--navy);}
+  .qr-code-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;}
+
+  /* ===== Sticky mobile actions ===== */
+  .sticky-actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:35;
+    background:var(--white);border-top:1px solid var(--panel2);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;gap:10px;box-shadow:0 -2px 10px rgba(11,42,74,0.06);
+  }
+  .sticky-actions .btn{flex:1;}
+  @media (min-width:1024px){ .sticky-actions{display:none;} }
+  .inline-actions{display:none;}
+  @media (min-width:1024px){ .inline-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;} }
+  .content{padding-bottom:96px;}
+  @media (min-width:1024px){ .content{padding-bottom:44px;} }
+
+  /* ===== Footer ===== */
+  .footer{padding:16px;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  @media (min-width:1024px){ .footer{display:flex;padding:16px 32px 22px;} }
+  .footer-accent{display:flex;height:5px;width:120px;border-radius:4px;overflow:hidden;}
+  .footer-accent span{flex:1;}
+  .footer-text{font-size:11.5px;color:var(--text-secondary);}
+
+  .step-panel{display:none;}
+  .step-panel.visible{display:block;animation:fadein .2s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="body-row">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 19h20L12 2z"/></svg></div>
+        <div class="brand-text">AeroAset<span>Manajemen Aset Aviasi</span></div>
+      </div>
+      <div class="nav-section-label">Utama</div>
+      <a class="nav-item" href="dashboard-eksekutif.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="scan-qr-aset.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Scan QR Aset
+      </a>
+      <div class="nav-section-label">Aset &amp; Operasional</div>
+      <a class="nav-item active" href="pendaftaran-aset.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Inventaris Aset
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>
+        Pengadaan &amp; Penerimaan
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+        Penempatan &amp; Distribusi
+      </a>
+      <a class="nav-item" href="work-order.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.77z"/></svg>
+        Pemeliharaan
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>
+        Penilaian &amp; Penyusutan
+      </a>
+      <a class="nav-item" href="persetujuan-penghapusan.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Penghapusan Aset
+      </a>
+      <div class="nav-section-label">Kendali &amp; Pelaporan</div>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Audit &amp; Monitoring
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+        Pelaporan
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Manajemen Pengguna
+      </a>
+      <div class="nav-section-label">Khusus Aviasi</div>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.6 1.6 0 0 0-2.3-2.3L13.7 8.7 5.5 6.9a1 1 0 0 0-1 1.7l6 4-2 2-3-1-1 1 3 2 2 3 1-1-1-3 2-2 4 6a1 1 0 0 0 1.7-1z"/></svg>
+        Armada Pesawat
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Komponen &amp; Suku Cadang
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>
+        Safety Management System
+      </a>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title">
+          <a class="back-btn" href="dashboard-eksekutif.html" aria-label="Kembali">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </a>
+          <div>
+            <h1>Pendaftaran Aset Baru</h1>
+            <div class="subtitle">Inventaris Aset · Form pendaftaran 4 langkah</div>
+          </div>
+        </div>
+        <div class="avatar-wrap">
+          <div class="avatar">RS</div>
+          <div class="avatar-meta">
+            <div class="avatar-name">Rina Setiawan</div>
+            <div class="avatar-role">Direktur Teknik &amp; Aset</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="panel">
+
+          <!-- STEPPER -->
+          <div class="stepper" id="stepper">
+            <div class="step active" data-step="1">
+              <div class="step-line"></div>
+              <div class="step-circle">1</div>
+              <div class="step-label">Identitas Aset</div>
+            </div>
+            <div class="step" data-step="2">
+              <div class="step-line"></div>
+              <div class="step-circle">2</div>
+              <div class="step-label">Spesifikasi &amp; Nilai</div>
+            </div>
+            <div class="step" data-step="3">
+              <div class="step-line"></div>
+              <div class="step-circle">3</div>
+              <div class="step-label">Lokasi &amp; Penanggung Jawab</div>
+            </div>
+            <div class="step" data-step="4">
+              <div class="step-line"></div>
+              <div class="step-circle">4</div>
+              <div class="step-label">Dokumen</div>
+            </div>
+          </div>
+
+          <!-- STEP 1 -->
+          <div class="step-panel visible" id="panel-1">
+            <div class="section-title">Identitas Aset</div>
+            <div class="section-sub">Informasi dasar yang mengidentifikasi aset secara unik</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Kode Aset <span class="opt">(auto-generate)</span></label>
+                <input type="text" value="AST-2026-08-1147" readonly>
+                <div class="field-hint">Kode dibuat otomatis oleh sistem saat penyimpanan</div>
+              </div>
+              <div class="form-group">
+                <label>Nama Aset</label>
+                <input type="text" placeholder="Contoh: APU Starter Generator" value="APU Starter Generator">
+              </div>
+              <div class="form-group">
+                <label>Kategori</label>
+                <select>
+                  <option>Komponen &amp; Suku Cadang</option>
+                  <option>Pesawat</option>
+                  <option>Ground Support Equipment</option>
+                  <option>Kendaraan Operasional</option>
+                  <option>Fasilitas Hangar &amp; Gudang</option>
+                  <option>IT &amp; Elektronik</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Merek / Tipe</label>
+                <input type="text" placeholder="Contoh: Honeywell 131-9A" value="Honeywell 131-9A">
+              </div>
+              <div class="form-group">
+                <label>Serial Number</label>
+                <input type="text" placeholder="Contoh: SN-88213X" value="SN-88213X">
+              </div>
+              <div class="form-group">
+                <label>Tanggal Perolehan</label>
+                <input type="date" value="2026-08-12">
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-panel" id="panel-2">
+            <div class="section-title">Spesifikasi &amp; Nilai</div>
+            <div class="section-sub">Data nilai perolehan dan metode penyusutan aset</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nilai Perolehan</label>
+                <div class="input-affix"><span>Rp</span><input type="text" value="1.250.400.000"></div>
+              </div>
+              <div class="form-group">
+                <label>Umur Ekonomis</label>
+                <div class="input-affix"><span></span><input type="number" value="8" style="padding-left:12px"></div>
+                <div class="field-hint">Dalam satuan tahun</div>
+              </div>
+              <div class="form-group">
+                <label>Metode Penyusutan</label>
+                <select>
+                  <option>Garis Lurus</option>
+                  <option>Saldo Menurun</option>
+                  <option>Unit Produksi</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Kondisi Awal</label>
+                <select>
+                  <option>Baik / Normal</option>
+                  <option>Perlu Perhatian</option>
+                </select>
+              </div>
+              <div class="form-group span-2">
+                <label>Spesifikasi Teknis <span class="opt">(opsional)</span></label>
+                <textarea placeholder="Tuliskan spesifikasi teknis tambahan...">Starter-generator APU untuk armada Boeing 737NG, kapasitas 40kVA, kompatibel dengan APU GTCP131-9A.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-panel" id="panel-3">
+            <div class="section-title">Lokasi &amp; Penanggung Jawab</div>
+            <div class="section-sub">Penempatan aset dan pihak yang bertanggung jawab</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Unit Kerja</label>
+                <select>
+                  <option>Divisi Teknik</option>
+                  <option>Divisi Operasional</option>
+                  <option>Divisi Logistik</option>
+                  <option>Divisi Keuangan &amp; Aset</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Lokasi</label>
+                <select>
+                  <option>Gudang Pusat · Hangar 1</option>
+                  <option>Gudang Pusat · Hangar 2</option>
+                  <option>Gudang Teknik · Hangar 2</option>
+                  <option>Apron &amp; Ground Support Area</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Penanggung Jawab</label>
+                <select>
+                  <option>Andi Prasetyo — Teknisi Senior</option>
+                  <option>Budi Santoso — Kepala Gudang</option>
+                  <option>Citra Ramadhani — Manajer Teknik</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Kontak Penanggung Jawab</label>
+                <input type="text" value="+62 812-3456-7890">
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="step-panel" id="panel-4">
+            <div class="section-title">Dokumen</div>
+            <div class="section-sub">Unggah foto &amp; dokumen pendukung, lalu tinjau label QR yang akan dicetak</div>
+            <div class="form-grid">
+              <div class="form-group span-2">
+                <label>Foto Aset</label>
+                <div class="dropzone" onclick="this.querySelector('input').click()">
+                  <input type="file" hidden multiple accept="image/*">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  <div><strong>Klik untuk unggah</strong> atau seret &amp; letakkan foto di sini</div>
+                  <div class="field-hint">Format JPG/PNG, maksimum 10MB per file</div>
+                </div>
+                <div class="file-chip-list">
+                  <div class="file-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>foto-depan.jpg</div>
+                  <div class="file-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>foto-label-seri.jpg</div>
+                </div>
+              </div>
+              <div class="form-group span-2">
+                <label>Dokumen Pendukung <span class="opt">(faktur, garansi, manual)</span></label>
+                <div class="dropzone" onclick="this.querySelector('input').click()">
+                  <input type="file" hidden multiple>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                  <div><strong>Klik untuk unggah</strong> dokumen pendukung</div>
+                  <div class="field-hint">Format PDF, maksimum 10MB per file</div>
+                </div>
+                <div class="file-chip-list">
+                  <div class="file-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>faktur-pembelian.pdf</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Preview Label QR</label>
+                <div class="qr-box">
+                  <div class="qr-pattern" id="qrPattern"></div>
+                  <div class="qr-code-text">AST-2026-08-1147</div>
+                  <div class="qr-code-sub">APU Starter Generator · Hangar 1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NAV BUTTONS (desktop inline) -->
+          <div class="inline-actions">
+            <button class="btn btn-ghost" id="btnBackDesktop" onclick="prevStep()">Kembali</button>
+            <button class="btn btn-secondary" onclick="alert('Draf tersimpan (dummy).')">Simpan Draf</button>
+            <button class="btn btn-primary" id="btnNextDesktop" onclick="nextStep()">Lanjut</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>
+          <div class="footer-accent"><span style="background:#0B2A4A"></span><span style="background:#1B5FA8"></span><span style="background:#8FC6EE"></span></div>
+          <div class="footer-text" style="margin-top:8px;">AeroAset · Sistem Manajemen Aset Aviasi © 2026</div>
+        </div>
+        <div class="footer-text">Data ditampilkan bersifat ilustratif untuk keperluan presentasi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY MOBILE ACTIONS -->
+  <div class="sticky-actions">
+    <button class="btn btn-secondary" onclick="alert('Draf tersimpan (dummy).')">Simpan Draf</button>
+    <button class="btn btn-primary" id="btnNextMobile" onclick="nextStep()">Lanjut</button>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="bn-item" href="dashboard-eksekutif.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a class="bn-item active" href="pendaftaran-aset.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Aset
+    </a>
+    <a class="bn-item" href="scan-qr-aset.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      Scan
+    </a>
+    <a class="bn-item" href="work-order.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+      WO
+    </a>
+    <a class="bn-item" href="persetujuan-penghapusan.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>
+      Approval
+    </a>
+  </nav>
+</div>
+
+<script>
+  // Fake QR pattern (deterministic, purely visual)
+  (function(){
+    const seed = [1,1,1,1,1,0,1,1,0,1,1,1,1, 1,0,0,0,0,0,1,0,0,0,0,0,1, 1,0,1,1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,1,0,1,1,0,0,1,1,1,1,1,0,1,1,0,1,1,1];
+    const grid = document.getElementById('qrPattern');
+    const cells = 13*13;
+    let pattern = [];
+    for(let i=0;i<cells;i++){ pattern.push(seed[i % seed.length] ^ (i % 3 === 0 ? 1 : 0)); }
+    // force finder patterns (corners)
+    function setBlock(r0,c0){
+      for(let r=0;r<7;r++) for(let c=0;c<7;c++){
+        const idx=(r0+r)*13+(c0+c);
+        const border = (r===0||r===6||c===0||c===6);
+        const inner = (r>=2&&r<=4&&c>=2&&c<=4);
+        pattern[idx] = (border||inner) ? 1 : 0;
+      }
+    }
+    setBlock(0,0); setBlock(0,6); setBlock(6,0);
+    pattern.forEach(v=>{
+      const d = document.createElement('div');
+      if(!v) d.className='off';
+      grid.appendChild(d);
+    });
+  })();
+
+  // Stepper logic
+  let currentStep = 1;
+  const totalSteps = 4;
+  function renderStep(){
+    document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('visible'));
+    document.getElementById('panel-'+currentStep).classList.add('visible');
+    document.querySelectorAll('.step').forEach(s=>{
+      const n = parseInt(s.dataset.step);
+      s.classList.remove('active','done');
+      if(n < currentStep) s.classList.add('done');
+      if(n === currentStep) s.classList.add('active');
+    });
+    const isLast = currentStep === totalSteps;
+    document.getElementById('btnNextDesktop').textContent = isLast ? 'Ajukan' : 'Lanjut';
+    document.getElementById('btnNextMobile').textContent = isLast ? 'Ajukan' : 'Lanjut';
+    document.getElementById('btnBackDesktop').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    document.querySelector('.content').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function nextStep(){
+    if(currentStep < totalSteps){ currentStep++; renderStep(); }
+    else { alert('Pengajuan aset berhasil dikirim untuk persetujuan (dummy).'); }
+  }
+  function prevStep(){
+    if(currentStep > 1){ currentStep--; renderStep(); }
+  }
+  renderStep();
+</script>
+
+</body>
+</html>
