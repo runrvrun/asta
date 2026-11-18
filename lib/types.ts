@@ -8,7 +8,7 @@ export interface User {
   username: string;
   password: string; // demo only, stored in plain text
   name: string;
-  nrp: string; // nomor registrasi pokok
+  nip: string; // nomor induk pegawai
   position: string; // jabatan
   role: Role;
   unitId: string;

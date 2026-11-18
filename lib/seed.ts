@@ -5,7 +5,7 @@ import type {
   SparePart, StockMovement, StockTake, Transfer, Unit, User, WorkOrder, AviationInfo, Condition, AssetStatus,
 } from "./types";
 
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 export const DEMO_PASSWORD = "asta123";
 
 // ---------- helpers ----------
@@ -78,21 +78,21 @@ const LOCATIONS: Location[] = [
 ];
 
 function makeUsers(now: number): User[] {
-  const u = (id: string, username: string, name: string, nrp: string, position: string, role: User["role"], unitId: string, active = true, lastLoginDaysAgo?: number): User => ({
-    id, username, password: DEMO_PASSWORD, name, nrp, position, role, unitId, active,
+  const u = (id: string, username: string, name: string, nip: string, position: string, role: User["role"], unitId: string, active = true, lastLoginDaysAgo?: number): User => ({
+    id, username, password: DEMO_PASSWORD, name, nip, position, role, unitId, active,
     lastLogin: lastLoginDaysAgo === undefined ? undefined : tsOffset(now, -lastLoginDaysAgo, 8, 15),
   });
   return [
-    u("usr-admin", "admin", "Dimas Prakoso", "512308", "Kasubsi Sistem Informasi Aset", "admin", "u-mkp", true, 1),
-    u("usr-pimpinan", "komandan", "Hendra Wijayakusuma", "507711", "Komandan Pangkalan Wirasakti", "pimpinan", "u-pws", true, 2),
-    u("usr-petugas", "petugas", "Sari Anggraini", "521904", "Perwira Pengelola Aset", "petugas", "u-pws", true, 0),
-    u("usr-teknisi", "teknisi", "Andi Prasetyo", "689012", "Teknisi Pesawat Angkut", "teknisi", "u-d40", true, 0),
-    u("usr-auditor", "auditor", "Ratna Pertiwi", "509837", "Inspektur Logistik", "auditor", "u-mkp", true, 5),
-    u("usr-pimpinan2", "kadepo", "Agus Setiadi", "510244", "Kepala Depo Pemeliharaan 40", "pimpinan", "u-d40", true, 3),
-    u("usr-petugas2", "petugas2", "Fajar Nugroho", "530118", "Perwira Logistik Pangkalan", "petugas", "u-pcb", true, 4),
-    u("usr-teknisi2", "budi", "Budi Santoso", "701556", "Teknisi Helikopter", "teknisi", "u-s07", true, 1),
-    u("usr-teknisi3", "citra", "Citra Ramadhani", "655230", "Teknisi Kelistrikan & Avionik", "teknisi", "u-d40", true, 2),
-    u("usr-teknisi4", "dedi", "Dedi Kurniawan", "688417", "Teknisi Mesin", "teknisi", "u-d40", true, 6),
+    u("usr-admin", "admin", "Dimas Prakoso", "198203142005011002", "Kasubsi Sistem Informasi Aset", "admin", "u-mkp", true, 1),
+    u("usr-pimpinan", "komandan", "Hendra Wijayakusuma", "197501082000031001", "Komandan Pangkalan Wirasakti", "pimpinan", "u-pws", true, 2),
+    u("usr-petugas", "petugas", "Sari Anggraini", "198809232012122003", "Perwira Pengelola Aset", "petugas", "u-pws", true, 0),
+    u("usr-teknisi", "teknisi", "Andi Prasetyo", "199004172014031004", "Teknisi Pesawat Angkut", "teknisi", "u-d40", true, 0),
+    u("usr-auditor", "auditor", "Ratna Pertiwi", "197811052003122002", "Inspektur Logistik", "auditor", "u-mkp", true, 5),
+    u("usr-pimpinan2", "kadepo", "Agus Setiadi", "197907192004031003", "Kepala Depo Pemeliharaan 40", "pimpinan", "u-d40", true, 3),
+    u("usr-petugas2", "petugas2", "Fajar Nugroho", "199306022018011005", "Perwira Logistik Pangkalan", "petugas", "u-pcb", true, 4),
+    u("usr-teknisi2", "budi", "Budi Santoso", "199508112019031006", "Teknisi Helikopter", "teknisi", "u-s07", true, 1),
+    u("usr-teknisi3", "citra", "Citra Ramadhani", "199102282015032004", "Teknisi Kelistrikan & Avionik", "teknisi", "u-d40", true, 2),
+    u("usr-teknisi4", "dedi", "Dedi Kurniawan", "198912032013031007", "Teknisi Mesin", "teknisi", "u-d40", true, 6),
     u("usr-petugas3", "wulan", "Wulan Maharani", "198804122010", "Pengelola Barang Milik Negara", "petugas", "u-mkp", false, 60),
   ];
 }

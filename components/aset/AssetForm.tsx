@@ -384,8 +384,8 @@ export function LocationSection({ d, set, errors, db }: SectionProps) {
           {users.map((u) => <option key={u.id} value={u.id}>{u.name} — {u.position}</option>)}
         </select>
       </Field>
-      <Field label="NRP / Jabatan Penanggung Jawab">
-        <input className="input" disabled value={pic ? `${pic.nrp} · ${pic.position}` : ""} />
+      <Field label="NIP / Jabatan Penanggung Jawab">
+        <input className="input" disabled value={pic ? `${pic.nip} · ${pic.position}` : ""} />
       </Field>
     </div>
   );

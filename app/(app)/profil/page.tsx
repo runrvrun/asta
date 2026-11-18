@@ -60,7 +60,7 @@ export default function ProfilPage() {
             ) : (
               <div className="kv-grid cols-3">
                 <KV label="Nama pengguna">{user.username}</KV>
-                <KV label="NRP / NIP">{user.nrp}</KV>
+                <KV label="NIP">{user.nip}</KV>
                 <KV label="Peran">{ROLE_LABEL[user.role]}</KV>
                 <KV label="Satuan">{unitName(db, user.unitId)}</KV>
                 <KV label="Login terakhir">{formatDateTime(user.lastLogin)}</KV>

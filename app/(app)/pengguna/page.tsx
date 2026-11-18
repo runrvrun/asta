@@ -25,7 +25,7 @@ const MATRIX: { label: string; perm: Permission }[] = [
 ];
 
 type Draft = Omit<User, "id" | "lastLogin">;
-const EMPTY: Draft = { username: "", password: "", name: "", nrp: "", position: "", role: "petugas", unitId: "", active: true };
+const EMPTY: Draft = { username: "", password: "", name: "", nip: "", position: "", role: "petugas", unitId: "", active: true };
 
 export default function PenggunaPage() {
   return <RequireRole roles={["admin"]}><Users /></RequireRole>;
@@ -47,7 +47,7 @@ function Users() {
   const rows = useMemo(() => {
     const s = q.trim().toLowerCase();
     return db.users.filter((u) => (!role || u.role === role) && (!status || (status === "aktif") === u.active)
-      && (!s || [u.name, u.username, u.nrp, u.position].some((v) => v.toLowerCase().includes(s))));
+      && (!s || [u.name, u.username, u.nip, u.position].some((v) => v.toLowerCase().includes(s))));
   }, [db.users, q, role, status]);
 
   const openNew = () => { setErrors({}); setEditing({ draft: { ...EMPTY, unitId: db.units[0]?.id ?? "" } }); };
@@ -61,7 +61,7 @@ function Users() {
     if (!/^[a-z0-9._]{3,}$/i.test(d.username)) err.username = "Minimal 3 karakter: huruf, angka, titik, atau garis bawah.";
     else if (db.users.some((u) => u.username.toLowerCase() === d.username.toLowerCase() && u.id !== editing.id)) err.username = "Nama pengguna sudah dipakai.";
     if (d.name.trim().length < 3) err.name = "Wajib diisi.";
-    if (!d.nrp.trim()) err.nrp = "Wajib diisi.";
+    if (!d.nip.trim()) err.nip = "Wajib diisi.";
     if (!d.unitId) err.unitId = "Pilih satuan.";
     if (!editing.id && d.password.length < 6) err.password = "Minimal 6 karakter.";
     if (editing.id === me.id && !d.active) err.active = "Anda tidak dapat menonaktifkan akun sendiri.";
@@ -103,7 +103,7 @@ function Users() {
 
       <div className="panel">
         <div className="toolbar">
-          <SearchBox value={q} onChange={setQ} placeholder="Cari nama, username, NRP..." />
+          <SearchBox value={q} onChange={setQ} placeholder="Cari nama, username, NIP..." />
           <select className="select" value={role} onChange={(e) => setRole(e.target.value)} aria-label="Peran"><option value="">Semua peran</option>{ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}</select>
           <select className="select" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status"><option value="">Semua status</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select>
         </div>
@@ -113,7 +113,7 @@ function Users() {
               <thead><tr><th>Pengguna</th><th>Username</th><th>Peran</th><th>Satuan / jabatan</th><th>Login terakhir</th><th>Status</th><th /></tr></thead>
               <tbody>{rows.map((u) => (
                 <tr key={u.id}>
-                  <td><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="cell-strong">{u.name}</div><div className="cell-sub">NRP {u.nrp}</div></div></div></td>
+                  <td><div className="row" style={{ flexWrap: "nowrap" }}><div className="avatar sm">{initials(u.name)}</div><div><div className="cell-strong">{u.name}</div><div className="cell-sub">NIP {u.nip}</div></div></div></td>
                   <td className="mono">{u.username}</td>
                   <td><Badge tone={u.role === "admin" ? "critical" : u.role === "pimpinan" ? "warning" : "normal"} dot={false}>{ROLE_LABEL[u.role]}</Badge></td>
                   <td>{unitName(db, u.unitId)}<div className="cell-sub">{u.position}</div></td>
@@ -155,7 +155,7 @@ function Users() {
               <Field label="Kata sandi awal" required error={errors.password} hint="Minimal 6 karakter"><input className={`input ${errors.password ? "invalid" : ""}`} value={d.password} onChange={(e) => set("password", e.target.value)} autoComplete="new-password" /></Field>
             ) : <div />}
             <Field label="Nama lengkap" required error={errors.name}><input className={`input ${errors.name ? "invalid" : ""}`} value={d.name} onChange={(e) => set("name", e.target.value)} /></Field>
-            <Field label="NRP / NIP" required error={errors.nrp}><input className={`input ${errors.nrp ? "invalid" : ""}`} value={d.nrp} onChange={(e) => set("nrp", e.target.value)} /></Field>
+            <Field label="NIP" required error={errors.nip}><input className={`input ${errors.nip ? "invalid" : ""}`} value={d.nip} onChange={(e) => set("nip", e.target.value)} /></Field>
             <Field label="Jabatan"><input className="input" value={d.position} onChange={(e) => set("position", e.target.value)} /></Field>
             <Field label="Satuan" required error={errors.unitId}><select className="select" value={d.unitId} onChange={(e) => set("unitId", e.target.value)}>{db.units.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}</select></Field>
             <Field label="Peran" required error={errors.role} hint={ROLE_DESC[d.role]}><select className="select" value={d.role} onChange={(e) => set("role", e.target.value as Role)}>{ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}</select></Field>

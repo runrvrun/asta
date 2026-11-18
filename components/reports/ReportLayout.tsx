@@ -63,7 +63,7 @@ export function ReportLayout({ title, subtitle, filters, filterDesc, summary, on
             Mengetahui,<br />Pejabat Penyetuju<br /><br /><br /><br />(.................................)
           </div>
           <div style={{ textAlign: "center", width: 220 }}>
-            {formatDate(new Date())}<br />Dibuat oleh<br /><br /><br /><br />{user ? `${user.name}` : ""}<br />NRP {user?.nrp}
+            {formatDate(new Date())}<br />Dibuat oleh<br /><br /><br /><br />{user ? `${user.name}` : ""}<br />NIP {user?.nip}
           </div>
         </div>
       </div>
